@@ -1,70 +1,59 @@
-
-#Import libaries
+#Import libraries
 import os
 import csv
 
 #open and read csv
-file_path = os.path.join("Resources","budget_data.csv")
+budget_data = os.path.join("Resources","budget_data.csv")
 
 #total month needs to be set to zero
-totalMonths = 0
-totalRev = 0
-pastRev= 0
-highestIncRev= 0
-lowestDecRev = 99999999999
-
-#create lists for revenue change
-revChange = []
+total_month = 0
+total_pl = 0
+value = 0
+change = []
+dates = []
+profits = []
 
 #Read budget_data.csv file
-with open (file_path,'r') as csvfile:
-   csvdata = csv.reader(csvfile, delimiter = ',')
-   
-#print (csv_file)
-next(csvdata, None)
-
-   
-#Creating for loop for variables and count calculations
-for row in csvdata:
-        totalMonths = totalMonths + 1
-        #count total revenue
-        totalRev = totalRev + (int(row[1]))
-        #create variable to count revenue change
-        monthlyrevChange = int(row[1]) - pastRev
-        pastRev = int(row[1])
-        #add change to new list
-        revChange.append(monthlyrevChange) 
-        avgrevChange = round(sum(revChange)/totalMonths)
+with open (budget_data) as file :
+   csv_file = csv.reader(file, delimiter = ",")
+    #Reading header row
+   csv_header = next(csv_file)
+    
+    #Creating for loop for calculations
+   for row in csv_file:
+        dates.append(row[0])
+        change.append(int(row[1]) - value)
+        profits.append(row[1])
+        total_pl = total_pl + int(row[1])
+        value = int(row[1])
+        total_month += 1
+       
+    #Find the max and min revenue and associated dates   
+   greatest_increase = max(change)
+   greatest_index = change.index(greatest_increase)
+   greatest_date = dates[greatest_index]
         
-        #Find the greatest increase and decrease in Revenue
-        if (monthlyrevChange > highestIncRev):
-             highestIncMonth = row[0]
-             highestIncRev = monthlyrevChange
-             
-if (monthlyrevChange < lowestDecRev):
-               lowestDecMonth = row[0]
-               lowestDecRev = monthlyrevChange
-               
-                
-#Print the Financial Analysis Results with f strings to format
-print("Financial Analysis")
-print("------------------")
-print(f"Total Months: {totalMonths}")
-print(f"Total: ${totalRev}")
-print(f"Average Revenue Change: ${avgrevChange}")
-print(f"Greatest Increase in Revenue: {highestIncMonth} (${highestIncRev})")
-print(f"Greatest Decrease in Revenue: {lowestDecMonth} (${lowestDecRev})")
+   greatest_decrease = min(change)
+   worst_index = change.index(greatest_decrease)
+   worst_date = dates[worst_index]
+        
+   avg_change = (sum(change)-change[0])/(len(change)-1)
+        
+        #Output Displayed
+   print("Financial Analysis")
+   print("------------------")
+   print(f"Total Months: {str(total_month)}")
+   print(f"Total: ${str(total_pl)}")
+   print(f"Average Change: ${str(round(avg_change,2))}")
+   print(f"Greatest Increase in Profits: {greatest_date} (${str(greatest_increase)})")
+   print(f"Greatest Decrease in Profits: {worst_date} (${str(greatest_decrease)})")
 
-   
-#write output file to export results into text file
-with open("Financial_Analysis.txt", "w") as file:
-     file.write("Financial Analysis")
-     file.write("------------------")  
-     file.write(f"Total Months: {totalMonths}")
-     file.write(f"Average Revenue Change: ${avgrevChange}") 
-     file.write(f"Greatest Increase in Revenue: {highestIncMonth} (${highestIncRev})") 
-     file.write(f"Greatest Decrease in Revenue: {lowestDecMonth} (${lowestDecRev})")  
-     
-     #close the file written to
-     file.close    
-   
+  #Copy to textfile
+with open("Financial_analysis.text" , 'w+') as text:
+     text.write("Financial Analysis\n"
+                  "------------------\n" 
+                  f"Total Months: {str(total_month)}\n"
+                  f"Total: ${str(total_pl)}\n"
+                  f"Average Change: ${str(round(avg_change,2))}\n" 
+                  f"Greatest Increase in Profits: {greatest_date} (${str(greatest_increase)})\n" 
+                  f"Greatest Decrease in Profits: {worst_date} (${str(greatest_decrease)})")  

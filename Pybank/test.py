@@ -1,4 +1,4 @@
-#Import libaries
+#Import libraries
 import os
 import csv
 
@@ -28,7 +28,7 @@ with open (budget_data) as file :
         value = int(row[1])
         total_month += 1
        
-        
+    #Find the max and min revenue and associated dates   
    greatest_increase = max(change)
    greatest_index = change.index(greatest_increase)
    greatest_date = dates[greatest_index]
