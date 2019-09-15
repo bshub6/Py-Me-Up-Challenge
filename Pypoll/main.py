@@ -3,7 +3,7 @@
 #Import libraries
 import os
 import csv
-import sys
+
 
 #open and read csv file
 file_path = os.path.join("Resources", "election_data.csv")
