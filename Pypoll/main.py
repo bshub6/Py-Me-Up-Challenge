@@ -1,41 +1,42 @@
 #create a Python script that analyzes the votes 
+
+#Import libraries
 import os
 import csv
+import sys
 
-csvpath = os.path.join('Resources', 'election_data.csv')
-csvpath_out = os.path.join('Resources', 'election_data.txt')
+#open and read csv file
+file_path = os.path.join("Resources", "election_data.csv")
 
-with open(csvpath, newline=',') as csvfile:
-    csvreader = csv.reader(csvfile, delimiter=',')
-    csv_header = next(csvreader, None)
+#Variables to envoke
+voters = []
+candidates = {}
+nVotes = 0
+duplicateVotes = []
 
-    total_votes = 0
-    candidates = []
-    votes = []
+with open (file_path,'r') as csvfile:
+    csvdata = csv.reader(csvfile, delimiter = ',')
+    
+    next(csvdata, 'None')
+    #Creating If Else statment in for loop
+    for row in csvdata:
+        if row[2] not in candidates.keys():
+            candidates[row[2]] = 1
+        else: 
+            candidates[row[2]] += 1
+        nVotes += 1
+        
+#calculate the winner of election
+winner = max(candidates, key=candidates.get)
 
-    for row in csvreader:
-        total_votes += 1
-        if row[2] in candidates:
-            votes[candidates.index(row[2])] += 1
-        else:
-            candidates.append(row[2])
-            votes.append(1)
-
-with open(csvpath_out, 'w', newline='') as txtfile:
-
-    txtfile.write('Election Results' + '\n')
-    txtfile.write('-------------------------' + '\n')
-    txtfile.write('Total Votes: ' + str(total_votes) + '\n')
-    txtfile.write('-------------------------' + '\n')
-
-    for y in range(len(candidates)):
-
-        txtfile.write(candidates[y] + ': ' + str(format(votes[y] / total_votes * 100, '.3f')) + '% (' + str(votes[y]) + ')\n')
-
-    txtfile.write('-------------------------' + '\n')
-    txtfile.write('Winner: ' + candidates[votes.index(max(votes))] + '\n')
-    txtfile.write('-------------------------')
-
-with open(csvpath_out, newline='') as f:
-    for line in f:
-        print(line, end = '')
+#Display elections results in terminal
+print('Election Results')
+print('----------------------------------------------')
+print('Total Votes:  + str(nVotes)')
+print('-----------------------------------------------')
+for k,v in candidates.items():
+    print(k + ': ' + str(round((100*v/nVotes),2)) + '% (' + str(v) +')')
+    print('-------------------------------------------')
+    print('Winner:' + winner')
+    print('-------------------------------------------')
+    #Print to text file
