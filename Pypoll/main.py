@@ -1,44 +1,61 @@
 #create a Python script that analyzes the votes 
 
 #Import libraries
+
 import os
 import csv
 
+#Create the path to file
 
-#open and read csv file
 file_path = os.path.join("Resources", "election_data.csv")
 
-#Variables to envoke
-voters = []
-candidates = {}
-nVotes = 0
-duplicateVotes = 0
+#Set Variables
 
-with open (file_path,'r') as csvfile:
+all_candidates = []
+vote_count = []
+
+with open(file_path,'r') as csvfile:
     csvdata = csv.reader(csvfile, delimiter = ',')
     
-    #No header
-    next(csvdata, 'None')
+    header = next(csvdata, None)
     
     #Creating If Else statment in for loop
     for row in csvdata:
-        if row[2] not in candidates.keys():
-            candidates[row[2]] = 1
-        else: 
-            candidates[row[2]] += 1
-        nVotes += 1
-        
-#calculate the winner of election
-winner = max(candidates, key=candidates.get)
+        if row[2] not in all_candidates:
+            all_candidates.append(row[2])
+            vote_count.append(1)
+        else:
+            whatindex = all_candidates.index(row[2])
+            vote_count[whatindex] += 1
+            
+  #Calculating the total vote and percentage counts          
 
-#Display elections results in terminal
-print('Election Results')
-print('----------------------------------------------')
-print('Total Votes:'  + str(nVotes)')
-print('-----------------------------------------------')
-for k,v in candidates.items():
-    print(k + ': ' + str(round((100*v/nVotes),2)) + '% (' + str(v) +')')
-    print('-------------------------------------------')
-    print('Winner:' + str(winner)')
-    print('-------------------------------------------')
-    #Print to text file
+    total_votes = sum(vote_count)
+
+    votepercentage = [round(vote_count[i]/total_votes*100,4) for i in range(0,len(vote_count))]
+
+    print("--------------------")
+    print("| Election Results |")
+    print("--------------------")
+    print(f"Total Votes: {total_votes}")
+    print("--------------------")
+    
+    for i in range(0,len(all_candidates)):
+        print(f"Candidate: {all_candidates[i]} with {vote_count[i]} votes ({votepercentage[i]}%)")
+
+    print("--------------------")
+    print(f"The winner is: {all_candidates[vote_count.index(max(vote_count))]}")
+    
+    #Display and write results to text
+
+    with open("Election Results.txt", "w") as text_file:
+        print("--------------------", file=text_file)
+        print("Election Results", file=text_file)
+        print("--------------------", file=text_file)
+        print(f"Total Votes: {total_votes}", file=text_file)
+        print("--------------------", file=text_file)
+        for i in range(0,len(all_candidates)):
+            print(f"Candidate: {all_candidates[i]} with {vote_count[i]} votes ({votepercentage[i]}%)", file=text_file)
+        print("--------------------", file=text_file)
+        print(f"The winner is: {all_candidates[vote_count.index(max(vote_count))]}", file=text_file)
+
